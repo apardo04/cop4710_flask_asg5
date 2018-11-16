@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Henry Books Final</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/font-awesome-4.7.0/css/font-awesome.min.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css')}}">
+    <script src="{{ url_for('static', filename='js/jquery.min.js')}}"></script>
+    <style>
+        #navigation {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333;
+        }
+
+        li {
+            float: left;
+            border-right:1px solid #bbb;
+        }
+
+        li:last-child {
+            border-right: none;
+        }
+
+        li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        li a:hover:not(.active) {
+            background-color: #111;
+        }
+
+        .active {
+            background-color: #4CAF50;
+        }
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% set navigation_bar = [
+            ('/', 'home', 'Home'),
+            ('/books', 'books', 'Books'),
+            ('/copies', 'copies', 'Copies'),
+            ('/publishers', 'publishers', 'Publishers'),
+            ('/authors', 'authors', 'Authors')
+        ] -%}
+        <ul id="navigation">
+            {% for href, id, text in navigation_bar %}
+                <li{% if id == page %} class="active"{% endif %}><a href="{{ href|e }}">{{ text|e }}</a></li>
+            {% endfor %}
+        </ul>
+
+        {% if page == "home" %}
+            HOMEPAGE
+        {% endif %}
+
+        {% if page == "books" %}
+            {% block bookInfo %}{% endblock %}
+            {% block books %}{% endblock %}
+        {% endif %}
+
+        {% if page == "copies" %}
+            {% block copies %}{% endblock %}
+        {% endif %}
+
+        {% if page == "publishers" %}
+            {% block publishers %}{% endblock %}
+        {% endif %}
+
+        {% if page == "authors" %}
+            {% block authors %}{% endblock %}
+        {% endif %}
+
+        {% block script %}{% endblock %}
+    </div>
+</body>
+</html>

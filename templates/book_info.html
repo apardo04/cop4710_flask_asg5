@@ -1,0 +1,29 @@
+<div id="book-header">
+    <h1>
+        {{book[0]["title"]}}<br>
+        Written by: {{ book[0]["authorFirst"]}} {{ book[0]["authorLast"] }}
+    </h1>
+</div>
+<div id="customer-info">
+    <div id="shipping-address">
+        <h1>Available At</h1>
+    </div>
+</div>
+<div id="book-items">
+    <div id="book-items-header">
+        <table>
+            <tr>
+                <th>Branch</th>
+                <th>Price</th>
+                <th>Quality</th>
+            </tr>
+            {% for x in book %}
+            <tr>
+                <td>{{ book[x]["branchName"]}}</td>
+                <td>{{ book[x]["price"]}}</td>
+                <td>{{ book[x]["quality"]}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>

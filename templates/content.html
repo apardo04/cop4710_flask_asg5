@@ -1,0 +1,160 @@
+{% extends "page.html" %}
+
+{% block books %}
+    <div id="search-cont">
+        <input id="book-search" type="text"><i id="search-button" class="fa fa-search" aria-hidden="true"></i>
+    </div>
+    <div>
+        <button id="add-book">Add A Book</button>
+    </div>
+    <table id="insert-table">
+        <tr>
+            <th>Book Code</th>
+            <th>Title</th>
+            <th>Publisher Code</th>
+            <th>Type</th>
+            <th>Paperback</th>
+            <th>Add</th>
+        </tr>
+            <tr>
+                <td><textarea></textarea></td>
+                <td><textarea></textarea></td>
+                <td><textarea></textarea></td>
+                <td><textarea></textarea></td>
+                <td><textarea></textarea></td>
+                <td><button>Add</button></td>
+            </tr>
+    </table>
+
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Papaperback</th>
+            <th>Delete</th>
+        </tr>
+        {% for x in data %}
+                <tr id="{{ data[x]["title"] }}" class="book">
+                    <td>{{ data[x]["title"] }}</td>
+                    <td>{{ data[x]["type"] }}</td>
+                    <td>{{ data[x]["paperback"] }}</td>
+                    <td><button id="{{x}}" class="delete" type="books">Delete</button></td>
+                </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
+
+{% block bookInfo %}
+<div id="book-info-overlay">
+    <div id="book-information-window">
+        <div id="close-overlay">
+            <i class="fa fa-times" aria-hidden="true"></i>
+        </div>
+        <div id="book-information-content"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block copies %}
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Branch</th>
+            <th>Number of Copies</th>
+            <th>Quality</th>
+            <th>Price</th>
+            <th>Delete</th>
+        </tr>
+        {% for x in data %}
+                <tr>
+                    <td>{{ data[x]["title"] }}</td>
+                    <td>{{ data[x]["branchName"] }}</td>
+                    <td>{{ data[x]["copyNum"] }}</td>
+                    <td>{{ data[x]["quality"] }}</td>
+                    <td>{{ data[x]["price"] }}</td>
+                    <td><button id="{{x}}" bookCode="{{ data[x]['bookCode'] }}" branchNum="{{ data[x]['branchNum'] }}" copyNum="{{ data[x]['copyNum'] }}" class="delete" type="copies">Delete</button></td>
+                </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
+
+{% block publishers %}
+    <table>
+        <tr>
+            <th>Publisher Code</th>
+            <th>Publisher Name</th>
+            <th>City</th>
+            <th>Delete</th>
+        </tr>
+        {% for x in data %}
+                <tr>
+                    <td>{{ x }}</td>
+                    <td>{{ data[x]["publisherName"] }}</td>
+                    <td>{{ data[x]["city"] }}</td>
+                    <td><button id="{{x}}" class="delete" type="publishers">Delete</button></td>
+                </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
+
+{% block authors %}
+    <table>
+        <tr>
+            <th>Last Name</th>
+            <th>First Name</th>
+            <th>Delete</th>
+        </tr>
+        {% for x in data %}
+                <tr>
+                    <td>{{ data[x]["authorLast"] }}</td>
+                    <td>{{ data[x]["authorFirst"] }}</td>
+                    <td><button id="{{x}}" class="delete" type="authors">Delete</button></td>
+                </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
+
+{% block script %}
+<script>
+    $("#close-overlay, #book-info-overlay").click(function(){
+        $("#book-info-overlay").hide();
+    });
+
+    $("#search-button").click(() => {
+        let ord = $("#book-search").val();
+        showBookData(ord);
+    });
+
+    $("#add-book").click(() => {
+       $("#insert-table").show();
+       $("#add-book").hide();
+    });
+
+     /* not working
+    $(".book").click(() => {
+        console.log($(this).attr("id"));
+        showBookData($(this).attr("id"));
+    });*/
+
+    $(".delete").click(() => {
+        let typeId= $(this).attr('type');
+        if(typeId == "copies") {
+            $.post("copies/delete", { bookCode: $(this).attr('bookCode'), branchNum: $(this).attr('branchNum'), copyNum: $(this).attr('copyNum')}, function (url) {
+                window.location.href = url;
+            })
+        }
+        else {
+            $.post(typeId + "/delete", $(this).attr('id'), function (url) {
+                window.location.href = url;
+            })
+        }
+    });
+
+    let showBookData = function(ord){
+        $.post( "books/search", ord, (data) => {
+            $("#book-information-content").html(data);
+            $("#book-info-overlay").show();
+        });
+    }
+</script>
+{% endblock %}
