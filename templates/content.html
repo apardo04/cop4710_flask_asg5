@@ -17,12 +17,14 @@
             <th>Add</th>
         </tr>
             <tr>
-                <td><textarea></textarea></td>
-                <td><textarea></textarea></td>
-                <td><textarea></textarea></td>
-                <td><textarea></textarea></td>
-                <td><textarea></textarea></td>
-                <td><button>Add</button></td>
+                <form onSubmit="return validateForm();" action="{{ url_for('book_add') }}" method="post">
+                    <td><input type="text" name="bookCode"></td>
+                    <td><input type="text" name="title"></td>
+                    <td><input type="text" name="publisherCode"></td>
+                    <td><input type="text" name="type"></td>
+                    <td><input type="text" name="paperback"></td>
+                    <td><input type="submit" value="Submit"></td>
+                </form>
             </tr>
     </table>
 
@@ -38,7 +40,7 @@
                     <td>{{ data[x]["title"] }}</td>
                     <td>{{ data[x]["type"] }}</td>
                     <td>{{ data[x]["paperback"] }}</td>
-                    <td><button id="{{x}}" class="delete" type="books">Delete</button></td>
+                    <td><button id="{{x}}" class="delete" page="books">Delete</button></td>
                 </tr>
         {% endfor %}
     </table>
@@ -72,7 +74,7 @@
                     <td>{{ data[x]["copyNum"] }}</td>
                     <td>{{ data[x]["quality"] }}</td>
                     <td>{{ data[x]["price"] }}</td>
-                    <td><button id="{{x}}" bookCode="{{ data[x]['bookCode'] }}" branchNum="{{ data[x]['branchNum'] }}" copyNum="{{ data[x]['copyNum'] }}" class="delete" type="copies">Delete</button></td>
+                    <td><button id="{{x}}" bookCode="{{ data[x]['bookCode'] }}" branchNum="{{ data[x]['branchNum'] }}" copyNum="{{ data[x]['copyNum'] }}" class="delete" page="copies">Delete</button></td>
                 </tr>
         {% endfor %}
     </table>
@@ -91,7 +93,7 @@
                     <td>{{ x }}</td>
                     <td>{{ data[x]["publisherName"] }}</td>
                     <td>{{ data[x]["city"] }}</td>
-                    <td><button id="{{x}}" class="delete" type="publishers">Delete</button></td>
+                    <td><button id="{{x}}" class="delete" page="publishers">Delete</button></td>
                 </tr>
         {% endfor %}
     </table>
@@ -108,7 +110,7 @@
                 <tr>
                     <td>{{ data[x]["authorLast"] }}</td>
                     <td>{{ data[x]["authorFirst"] }}</td>
-                    <td><button id="{{x}}" class="delete" type="authors">Delete</button></td>
+                    <td><button id="{{x}}" class="delete" page="authors">Delete</button></td>
                 </tr>
         {% endfor %}
     </table>
@@ -125,26 +127,26 @@
         showBookData(ord);
     });
 
+    $(".book").click(() => {
+        console.log($(event.currentTarget).attr("id"));
+        showBookData($(event.currentTarget).attr("id"));
+    });
+
     $("#add-book").click(() => {
        $("#insert-table").show();
        $("#add-book").hide();
     });
 
-     /* not working
-    $(".book").click(() => {
-        console.log($(this).attr("id"));
-        showBookData($(this).attr("id"));
-    });*/
-
-    $(".delete").click(() => {
-        let typeId= $(this).attr('type');
+    $("button.delete").click((event) => {
+        let typeId = $(event.currentTarget).attr('page');
+        console.log($(event.currentTarget).attr('id'))
         if(typeId == "copies") {
-            $.post("copies/delete", { bookCode: $(this).attr('bookCode'), branchNum: $(this).attr('branchNum'), copyNum: $(this).attr('copyNum')}, function (url) {
+            $.post("copies/delete", { bookCode: $(event.currentTarget).attr('bookCode'), branchNum: $(event.currentTarget).attr('branchNum'), copyNum: $(event.currentTarget).attr('copyNum')}, function (url) {
                 window.location.href = url;
             })
         }
         else {
-            $.post(typeId + "/delete", $(this).attr('id'), function (url) {
+            $.post(typeId + "/delete", $(event.currentTarget).attr('id'), function (url) {
                 window.location.href = url;
             })
         }
@@ -155,6 +157,30 @@
             $("#book-information-content").html(data);
             $("#book-info-overlay").show();
         });
+    }
+
+    let validateForm = () => {
+        if ($('input[name="bookCode"]').val() == "") {
+            alert("Missing Book Code");
+            return false
+        }
+        if ($('input[name="title"]').val() == "") {
+            alert("Missing Title");
+            return false;
+        }
+        if ($('input[name="publisherCode"]').val() == "") {
+            alert("Missing Publisher Code");
+            return false;
+        }
+        if ($('input[name="type"]').val() == "") {
+            alert("Missing Type");
+            return false;
+        }
+        if ($('input[name="paperback"]').val() == "") {
+            alert("Missing Paperback");
+            return false;
+        }
+        return true;
     }
 </script>
 {% endblock %}

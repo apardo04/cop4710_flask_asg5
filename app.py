@@ -33,7 +33,6 @@ def get_book_data(title):
 def index():
     return render_template("page.html", page="home")
 
-
 @app.route("/books")
 def books():
     db.query("select * from book.book")
@@ -53,6 +52,16 @@ def book_delete():
     data = request.get_data().decode("utf8")
     db.query("DELETE FROM book where bookCode = '" + data + "';")
     return "/books"
+
+@app.route("/books/add", methods=["POST"])
+def book_add():
+    bookCode = request.form['bookCode']
+    title = request.form['title']
+    publisherCode = request.form['publisherCode']
+    type = request.form['type']
+    paperback = request.form['paperback']
+    db.query("INSERT INTO book(bookCode, title, publisherCode, type, paperback) VALUES(" + bookCode + ", '" + title + "','" + publisherCode+ "', '" + type + "', '" + paperback + "');")
+    return redirect("/books")
 
 @app.route("/copies")
 def copies():
