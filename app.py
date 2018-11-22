@@ -5,7 +5,7 @@ import prettyprint
 import sys
 
 PATH = os.path.dirname(os.path.abspath(__file__))
-app=Flask("cop4710_asg5", template_folder=os.path.join(PATH, 'templates'), static_folder=os.path.join(PATH, 'static'))
+app=Flask("cop4710_flask_asg5", template_folder=os.path.join(PATH, 'templates'), static_folder=os.path.join(PATH, 'static'))
 
 db = _mysql.connect(host="localhost",
                     user='root',
@@ -31,7 +31,7 @@ def get_book_data(title):
 
 @app.route("/")
 def index():
-    return render_template("page.html", page="home")
+    return render_template("content.html", page="home")
 
 @app.route("/books")
 def books():
@@ -83,6 +83,16 @@ def copy_delete():
     db.query("DELETE FROM copy WHERE bookCode = '" + bookCode + "' AND branchNum = '" + branchNum + "' AND copyNum = '" + copyNum + "';")
     return "/copies"
 
+@app.route("/copies/add", methods=["POST"])
+def copy_add():
+    bookCode = request.form['bookCode']
+    branchNum = request.form['branchNum']
+    copyNum = request.form['copyNum']
+    quality = request.form['quality']
+    price = request.form['price']
+    db.query("INSERT INTO copy(bookCode, branchNum, copyNum, quality, price) VALUES (" + bookCode + ", " + branchNum + ", " +  copyNum + ", '" + quality + "', " + price + ");")
+    return redirect("/copies")
+
 @app.route("/publishers")
 def publishers():
     db.query("SELECT * FROM publisher;")
@@ -99,6 +109,14 @@ def publisher_delete():
     db.query("DELETE FROM publisher WHERE publisherCode = '" + data + "';")
     return "/publishers"
 
+@app.route("/publishers/add", methods=["POST"])
+def publisher_add():
+    publisherCode = request.form['publisherCode']
+    publisherName = request.form['publisherName']
+    city = request.form['city']
+    db.query("INSERT INTO publisher(publisherCode, publisherName, city) VALUES ('" + publisherCode + "', '" + publisherName + "', '" +  city + "');")
+    return redirect("/publishers")
+
 @app.route("/authors")
 def authors():
     db.query("SELECT * FROM author;")
@@ -108,6 +126,10 @@ def authors():
         authors[x[0]] = {"authorLast": x[1].decode('utf8'), "authorFirst": x[2].decode('utf8')}
 
     return render_template("content.html", page="authors", data=authors)
+
+@app.route("/authors/add", methods=["POST"])
+def author_add():
+    return True
 
 @app.route("/authors/delete", methods=["POST"])
 def author_delete():

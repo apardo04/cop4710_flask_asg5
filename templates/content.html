@@ -1,11 +1,120 @@
 {% extends "page.html" %}
 
+{% block home %}
+<style>
+body, html {
+  height: 100%;
+  margin: 0;
+  font: 400 15px/1.8 "Lato", sans-serif;
+  color: #777;
+}
+
+.bgimg-1, .bgimg-2, .bgimg-3 {
+  position: relative;
+  opacity: 0.65;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+
+}
+.bgimg-1 {
+  background-image: url("{{ url_for('static', filename='img/library.jpeg')}}");
+  min-height: 100%;
+}
+
+.bgimg-2 {
+  background-image: url("{{ url_for('static', filename='img/library.jpeg')}}");
+  min-height: 400px;
+}
+
+.bgimg-3 {
+  background-image: url("{{ url_for('static', filename='img/library.jpeg')}}");
+  min-height: 400px;
+}
+
+.caption {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  text-align: center;
+  color: #000;
+}
+
+.caption span.border {
+  background-color: #111;
+  color: #fff;
+  padding: 18px;
+  font-size: 25px;
+  letter-spacing: 10px;
+}
+
+.caption a {
+    text-decoration: none;
+}
+h3 {
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  font: 20px "Lato", sans-serif;
+  color: #111;
+}
+
+/* Turn off parallax scrolling for tablets and phones */
+@media only screen and (max-device-width: 1024px) {
+    .bgimg-1, .bgimg-2, .bgimg-3 {
+        background-attachment: scroll;
+    }
+}
+</style>
+
+<div class="bgimg-1">
+  <div class="caption">
+    <a href="/books"><span class="border">HENRY BOOKS</span></a>
+  </div>
+</div>
+
+<div style="color:#ddd;background-color:#282E34;text-align:center;padding:50px 80px;text-align: justify;">
+  <p>The books page will list all books in the Henry Books Database. From here, you can search, delete, add and modify the books stored in the DB.</p>
+</div>
+
+<div class="bgimg-2">
+  <div class="caption">
+      <a href="/copies"><span class="border">COPIES</span></a>
+  </div>
+</div>
+
+<div style="position:relative;">
+  <div style="color:#ddd;background-color:#282E34;text-align:center;padding:50px 80px;text-align: justify;">
+    <p></p>
+  </div>
+</div>
+
+<div class="bgimg-3">
+  <div class="caption">
+      <a href="/authors"><span class="border">AUTHORS</span></a>
+  </div>
+</div>
+
+<div style="position:relative;">
+  <div style="color:#ddd;background-color:#282E34;text-align:center;padding:50px 80px;text-align: justify;">
+    <p></p>
+  </div>
+</div>
+
+<div class="bgimg-1">
+  <div class="caption">
+      <a href="/publishers"><span class="border">PUBLISHERS</span></a>
+  </div>
+</div>
+{% endblock %}
+
 {% block books %}
     <div id="search-cont">
         <input id="book-search" type="text"><i id="search-button" class="fa fa-search" aria-hidden="true"></i>
     </div>
     <div>
-        <button id="add-book">Add A Book</button>
+        <button id="add-table-btn">Add A Book</button>
     </div>
     <table id="insert-table">
         <tr>
@@ -18,11 +127,11 @@
         </tr>
             <tr>
                 <form onSubmit="return validateForm();" action="{{ url_for('book_add') }}" method="post">
-                    <td><input type="text" name="bookCode"></td>
-                    <td><input type="text" name="title"></td>
-                    <td><input type="text" name="publisherCode"></td>
-                    <td><input type="text" name="type"></td>
-                    <td><input type="text" name="paperback"></td>
+                    <td><input type="text" class="add-input" name="bookCode"></td>
+                    <td><input type="text" class="add-input" name="title"></td>
+                    <td><input type="text" class="add-input" name="publisherCode"></td>
+                    <td><input type="text" class="add-input" name="type"></td>
+                    <td><input type="text" class="add-input" name="paperback"></td>
                     <td><input type="submit" value="Submit"></td>
                 </form>
             </tr>
@@ -32,7 +141,7 @@
         <tr>
             <th>Title</th>
             <th>Type</th>
-            <th>Papaperback</th>
+            <th>Paperback</th>
             <th>Delete</th>
         </tr>
         {% for x in data %}
@@ -58,6 +167,30 @@
 {% endblock %}
 
 {% block copies %}
+    <div>
+        <button id="add-table-btn">Add A Copy</button>
+    </div>
+    <table id="insert-table">
+        <tr>
+            <th>Book Code</th>
+            <th>Branch Number</th>
+            <th>Copy Number</th>
+            <th>Quality</th>
+            <th>Price</th>
+            <th>Add</th>
+        </tr>
+            <tr>
+                <form onSubmit="return validateForm();" action="{{ url_for('copy_add') }}" method="post">
+                    <td><input type="text" class="add-input" name="bookCode"></td>
+                    <td><input type="text" class="add-input" name="branchNum"></td>
+                    <td><input type="text" class="add-input" name="copyNum"></td>
+                    <td><input type="text" class="add-input" name="quality"></td>
+                    <td><input type="text" class="add-input" name="price"></td>
+                    <td><input type="submit" value="Submit"></td>
+                </form>
+            </tr>
+    </table>
+
     <table>
         <tr>
             <th>Title</th>
@@ -81,6 +214,24 @@
 {% endblock %}
 
 {% block publishers %}
+    <div>
+        <button id="add-table-btn">Add A Publisher</button>
+    </div>
+    <table id="insert-table">
+        <tr>
+            <th>Publisher Code</th>
+            <th>Publisher Name</th>
+            <th>City</th>
+        </tr>
+            <tr>
+                <form onSubmit="return validateForm();" action="{{ url_for('publisher_add') }}" method="post">
+                    <td><input type="text" class="add-input" name="publisherCode"></td>
+                    <td><input type="text" class="add-input" name="publisherName"></td>
+                    <td><input type="text" class="add-input" name="city"></td>
+                    <td><input type="submit" value="Submit"></td>
+                </form>
+            </tr>
+    </table>
     <table>
         <tr>
             <th>Publisher Code</th>
@@ -100,6 +251,22 @@
 {% endblock %}
 
 {% block authors %}
+    <div>
+        <button id="add-table-btn">Add An Author</button>
+    </div>
+    <table id="insert-table">
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+        </tr>
+            <tr>
+                <form onSubmit="return validateForm();" action="{{ url_for('author_add') }}" method="post">
+                    <td><input type="text" class="add-input" name="authorFirst"></td>
+                    <td><input type="text" class="add-input" name="authorLast"></td>
+                    <td><input type="submit" value="Submit"></td>
+                </form>
+            </tr>
+    </table>
     <table>
         <tr>
             <th>Last Name</th>
@@ -117,70 +284,57 @@
 {% endblock %}
 
 {% block script %}
-<script>
-    $("#close-overlay, #book-info-overlay").click(function(){
-        $("#book-info-overlay").hide();
-    });
-
-    $("#search-button").click(() => {
-        let ord = $("#book-search").val();
-        showBookData(ord);
-    });
-
-    $(".book").click(() => {
-        console.log($(event.currentTarget).attr("id"));
-        showBookData($(event.currentTarget).attr("id"));
-    });
-
-    $("#add-book").click(() => {
-       $("#insert-table").show();
-       $("#add-book").hide();
-    });
-
-    $("button.delete").click((event) => {
-        let typeId = $(event.currentTarget).attr('page');
-        console.log($(event.currentTarget).attr('id'))
-        if(typeId == "copies") {
-            $.post("copies/delete", { bookCode: $(event.currentTarget).attr('bookCode'), branchNum: $(event.currentTarget).attr('branchNum'), copyNum: $(event.currentTarget).attr('copyNum')}, function (url) {
-                window.location.href = url;
-            })
-        }
-        else {
-            $.post(typeId + "/delete", $(event.currentTarget).attr('id'), function (url) {
-                window.location.href = url;
-            })
-        }
-    });
-
-    let showBookData = function(ord){
-        $.post( "books/search", ord, (data) => {
-            $("#book-information-content").html(data);
-            $("#book-info-overlay").show();
+    <script>
+        $("#close-overlay, #book-info-overlay").click(() => {
+            $("#book-info-overlay").hide();
         });
-    }
 
-    let validateForm = () => {
-        if ($('input[name="bookCode"]').val() == "") {
-            alert("Missing Book Code");
-            return false
+        $("#search-button").click(() => {
+            let book = $("#book-search").val();
+            if(book != "")
+                showBookData(book);
+        });
+
+        $(".book").click(() => {
+            showBookData($(event.currentTarget).attr("id"));
+        });
+
+        $("#add-table-btn").click(() => {
+           $("#insert-table").show();
+           $("#add-table-btn").hide();
+        });
+
+        $("button.delete").click((event) => {
+            let typeId = $(event.currentTarget).attr('page');
+            if(typeId == "copies") {
+                $.post("copies/delete", { bookCode: $(event.currentTarget).attr('bookCode'), branchNum: $(event.currentTarget).attr('branchNum'), copyNum: $(event.currentTarget).attr('copyNum')}, (url) => {
+                    window.location.href = url;
+                })
+            }
+            else {
+                $.post(typeId + "/delete", $(event.currentTarget).attr('id'), (url) => {
+                    window.location.href = url;
+                })
+            }
+        });
+
+        let showBookData = (ord) => {
+            $.post( "books/search", ord, (data) => {
+                $("#book-information-content").html(data);
+                $("#book-info-overlay").show();
+            });
         }
-        if ($('input[name="title"]').val() == "") {
-            alert("Missing Title");
-            return false;
+
+        let validateForm = () => {
+            let isValidated = true;
+            $('.add-input').each(function(){
+                if ($(this).val() == "") {
+                    alert("Missing " + $(this).attr("name"));
+                    validated = false;
+                    return false;
+                }
+            });
+            return isValidated;
         }
-        if ($('input[name="publisherCode"]').val() == "") {
-            alert("Missing Publisher Code");
-            return false;
-        }
-        if ($('input[name="type"]').val() == "") {
-            alert("Missing Type");
-            return false;
-        }
-        if ($('input[name="paperback"]').val() == "") {
-            alert("Missing Paperback");
-            return false;
-        }
-        return true;
-    }
-</script>
+    </script>
 {% endblock %}
