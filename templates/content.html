@@ -86,7 +86,7 @@ h3 {
 
 <div style="position:relative;">
   <div style="color:#ddd;background-color:#282E34;text-align:center;padding:50px 80px;text-align: justify;">
-    <p></p>
+    <p>View, Edit, and add copies in stock at all Henry Books branches</p>
   </div>
 </div>
 
@@ -98,13 +98,19 @@ h3 {
 
 <div style="position:relative;">
   <div style="color:#ddd;background-color:#282E34;text-align:center;padding:50px 80px;text-align: justify;">
-    <p></p>
+    <p>View, Edit, and add authors in the Henry Books DB</p>
   </div>
 </div>
 
 <div class="bgimg-1">
   <div class="caption">
       <a href="/publishers"><span class="border">PUBLISHERS</span></a>
+  </div>
+</div>
+
+<div style="position:relative;">
+  <div style="color:#ddd;background-color:#282E34;text-align:center;padding:50px 80px;text-align: justify;">
+    <p>View, Edit, and add Publishers to the Henry Books DB</p>
   </div>
 </div>
 {% endblock %}
@@ -142,13 +148,23 @@ h3 {
             <th>Title</th>
             <th>Type</th>
             <th>Paperback</th>
+            <th>Publisher Code</th>
+            <th>Edit</th>
             <th>Delete</th>
         </tr>
         {% for x in data %}
-                <tr id="{{ data[x]["title"] }}" class="book">
-                    <td>{{ data[x]["title"] }}</td>
-                    <td>{{ data[x]["type"] }}</td>
-                    <td>{{ data[x]["paperback"] }}</td>
+                <tr>
+                    <form action="{{ url_for('book_edit') }}" method="post">
+                        <td><input type="text" class="edit-input edit-{{x}}" name="title" value="{{ data[x]["title"] }}"/><span class="data-text book edit-{{x}}" id="{{ data[x]["title"] }}">{{ data[x]["title"] }}</span></td>
+                        <td><input type="text" class="edit-input edit-{{x}}" name="type" value="{{ data[x]["type"] }}"/><span class="data-text edit-{{x}}">{{ data[x]["type"] }}</span></td>
+                        <td><input type="text" class="edit-input edit-{{x}}" name="paperback" value="{{ data[x]["paperback"] }}"/><span class="data-text edit-{{x}}">{{ data[x]["paperback"] }}</span></td>
+                        <td><input type="text" class="edit-input edit-{{x}}" name="publisherCode" value="{{ data[x]["publisherCode"] }}"/><span class="data-text edit-{{x}}">{{ data[x]["publisherCode"] }}</span></td>
+                        <td>
+                            <i class="fa fa-pencil-square-o edit-btn" aria-hidden="true" id="edit-{{x}}"></i>
+                            <input type="submit" value="Submit" class="edit-submit edit-{{ x }}">
+                            <input type="hidden" value="{{x}}" name="bookCode">
+                        </td>
+                    </form>
                     <td><button pk="{{x}}" class="delete" page="books">Delete</button></td>
                 </tr>
         {% endfor %}
@@ -194,19 +210,43 @@ h3 {
     <table>
         <tr>
             <th>Title</th>
+            <th>Book Code</th>
             <th>Branch</th>
+            <th>Branch Number</th>
             <th>Number of Copies</th>
             <th>Quality</th>
             <th>Price</th>
+            <th>Edit</th>
             <th>Delete</th>
         </tr>
         {% for x in data %}
                 <tr>
-                    <td>{{ data[x]["title"] }}</td>
-                    <td>{{ data[x]["branchName"] }}</td>
-                    <td>{{ data[x]["copyNum"] }}</td>
-                    <td>{{ data[x]["quality"] }}</td>
-                    <td>{{ data[x]["price"] }}</td>
+                    <form action="{{ url_for('copy_edit') }}" method="post">
+                        <td>{{ data[x]["title"] }}</td>
+                        <td>
+                            <input type="hidden" name="original_bookCode" value="{{ data[x]["bookCode"] }}"/>
+                            <input type="text" class="edit-input edit-{{x}}" name="bookCode" value="{{ data[x]["bookCode"] }}"/>
+                            <span class="data-text edit-{{x}}" id="{{ data[x]["bookCode"] }}">{{ data[x]["bookCode"] }}</span>
+                        </td>
+                        <td>{{ data[x]["branchName"] }}</td>
+                        <td>
+                            <input type="hidden" name="original_branchNum" value="{{ data[x]["branchNum"] }}"/>
+                            <input type="text" class="edit-input edit-{{x}}" name="branchNum" value="{{ data[x]["branchNum"] }}"/>
+                            <span class="data-text edit-{{x}}" id="{{ data[x]["branchNum"] }}">{{ data[x]["branchNum"] }}</span>
+                        </td>
+                        <td>
+                            <input type="hidden" name="original_copyNum" value="{{ data[x]["copyNum"] }}"/>
+                            <input type="text" class="edit-input edit-{{x}}" name="copyNum" value="{{ data[x]["copyNum"] }}"/>
+                            <span class="data-text edit-{{x}}" id="{{ data[x]["copyNum"] }}">{{ data[x]["copyNum"] }}</span>
+                        </td>
+                        <td><input type="text" class="edit-input edit-{{x}}" name="quality" value="{{ data[x]["quality"] }}"/><span class="data-text edit-{{x}}" id="{{ data[x]["quality"] }}">{{ data[x]["quality"] }}</span></td>
+                        <td><input type="text" class="edit-input edit-{{x}}" name="price" value="{{ data[x]["price"] }}"/><span class="data-text edit-{{x}}" id="{{ data[x]["price"] }}">{{ data[x]["price"] }}</span></td>
+                        <td>
+                            <i class="fa fa-pencil-square-o edit-btn" aria-hidden="true" id="edit-{{x}}"></i>
+                            <input type="submit" value="Submit" class="edit-submit edit-{{ x }}">
+                            <input type="hidden" value="{{x}}" name="bookCode">
+                        </td>
+                    </form>
                     <td><button pk="{{x}}" bookCode="{{ data[x]['bookCode'] }}" branchNum="{{ data[x]['branchNum'] }}" copyNum="{{ data[x]['copyNum'] }}" class="delete" page="copies">Delete</button></td>
                 </tr>
         {% endfor %}

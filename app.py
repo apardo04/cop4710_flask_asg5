@@ -63,15 +63,25 @@ def book_add():
     db.query("INSERT INTO book(bookCode, title, publisherCode, type, paperback) VALUES(" + bookCode + ", '" + title + "','" + publisherCode+ "', '" + type + "', '" + paperback + "');")
     return redirect("/books")
 
+@app.route("/books/edit", methods=["POST"])
+def book_edit():
+    bookCode = request.form['bookCode']
+    title = request.form['title']
+    publisherCode = request.form['publisherCode']
+    type = request.form['type']
+    paperback = request.form['paperback']
+    db.query("UPDATE book SET title ='" + title + "', publisherCode = '" + publisherCode + "', type = '" + type + "', paperback = '" + paperback + "' WHERE bookCode = '" + bookCode + "';")
+    return redirect('/books')
+
 @app.route("/copies")
 def copies():
-    db.query("SELECT title, branchName, copyNum, quality, price, copy.bookCode, copy.branchNum FROM book.copy INNER JOIN book, branch WHERE copy.bookCode = book.bookCode AND copy.branchNum = branch.branchNum;")
+    db.query("SELECT title, branchName, copyNum, quality, price, copy.bookCode, copy.branchNum, copy.bookCode FROM book.copy INNER JOIN book, branch WHERE copy.bookCode = book.bookCode AND copy.branchNum = branch.branchNum;")
     r = db.store_result().fetch_row(0)
     copies = {}
     i = 0
     for x in r:
         copies[i] = {"title": x[0].decode('utf8'), "branchName": x[1].decode('utf8'), "copyNum": x[2],
-                    "quality": x[3].decode('utf8'), "price": x[4], "bookCode": x[5].decode("utf8"), "branchNum": x[6]}
+                    "quality": x[3].decode('utf8'), "price": x[4], "bookCode": x[5].decode("utf8"), "branchNum": x[6], "bookCode": x[7].decode('utf8')}
         i = i + 1
     return render_template("content.html", page="copies", data=copies)
 
@@ -92,6 +102,19 @@ def copy_add():
     price = request.form['price']
     db.query("INSERT INTO copy(bookCode, branchNum, copyNum, quality, price) VALUES (" + bookCode + ", " + branchNum + ", " +  copyNum + ", '" + quality + "', " + price + ");")
     return redirect("/copies")
+
+@app.route("/copies/edit", methods=["POST"])
+def copy_edit():
+    original_bookCode = request.form['original_bookCode']
+    original_branchNum = request.form['original_branchNum']
+    original_copyNum = request.form['original_copyNum']
+    bookCode = request.form['bookCode']
+    branchNum = request.form['branchNum']
+    copyNum = request.form['copyNum']
+    quality = request.form['quality']
+    price = request.form['price']
+    db.query("UPDATE copy SET bookCode ='" + bookCode + "', branchNum = '" + branchNum + "', copyNum = '" + copyNum + "', quality = '" + quality + "', price = '" + price + "' WHERE bookCode = '" + original_bookCode + "' AND branchNum = '" + original_branchNum + "' AND copyNum = '" + original_copyNum + "';")
+    return redirect('/copies')
 
 @app.route("/publishers")
 def publishers():
