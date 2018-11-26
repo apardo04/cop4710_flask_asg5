@@ -9,7 +9,7 @@ app=Flask("cop4710_flask_asg5", template_folder=os.path.join(PATH, 'templates'),
 
 db = _mysql.connect(host="localhost",
                     user='root',
-                    passwd='',
+                    passwd='Unodos34',
                     db="book")
 
 
@@ -103,12 +103,6 @@ def publishers():
 
     return render_template("content.html", page="publishers", data=publishers)
 
-@app.route("/publishers/delete", methods=["POST"])
-def publisher_delete():
-    data = request.get_data().decode("utf8")
-    db.query("DELETE FROM publisher WHERE publisherCode = '" + data + "';")
-    return "/publishers"
-
 @app.route("/publishers/add", methods=["POST"])
 def publisher_add():
     publisherCode = request.form['publisherCode']
@@ -116,6 +110,16 @@ def publisher_add():
     city = request.form['city']
     db.query("INSERT INTO publisher(publisherCode, publisherName, city) VALUES ('" + publisherCode + "', '" + publisherName + "', '" +  city + "');")
     return redirect("/publishers")
+
+@app.route("/publishers/delete", methods=["POST"])
+def publisher_delete():
+    data = request.get_data().decode("utf8")
+    db.query("DELETE FROM publisher WHERE publisherCode = '" + data + "';")
+    return "/publishers"
+
+@app.route("/publishers/edit", methods=["POST"])
+def publisher_edit():
+    return True
 
 @app.route("/authors")
 def authors():
@@ -129,13 +133,26 @@ def authors():
 
 @app.route("/authors/add", methods=["POST"])
 def author_add():
-    return True
+    authorFirst = request.form['authorFirst']
+    authorLast = request.form['authorLast']
+    db.query("SELECT COUNT(authorNum) FROM book.author;")
+    authorNum = int(db.store_result().fetch_row(0)[0][0]) + 1
+    db.query("INSERT INTO author(authorLast, authorFirst, authorNum) VALUES ('" + authorLast + "', '" + authorFirst + "', " + str(authorNum) + ");")
+    return redirect("/authors")
 
 @app.route("/authors/delete", methods=["POST"])
 def author_delete():
     data = request.get_data().decode("utf8")
     db.query("DELETE FROM author where authorNum = " + data + ";")
     return "/authors"
+
+@app.route("/authors/edit", methods=["POST"])
+def author_edit():
+    authorFirst = request.form['authorFirst']
+    authorLast = request.form['authorLast']
+    authorNum = request.form['authorNum']
+    db.query("UPDATE author SET authorFirst = '" + authorFirst + "', authorLast = '" + authorLast + "' WHERE authorNum = " + authorNum + ";");
+    return redirect("/authors")
 
 if __name__ == '__main__':
     app.debug = True

@@ -57,9 +57,10 @@ i#search-button {
 #add-table-btn {
     margin: 9px;
 }
-#insert-table {
-    display: none;
+#insert-table, .edit-input, .edit-submit {
+    display:none;
 }
+
 /* Popup styling */
 #book-info-overlay {
     display: none;

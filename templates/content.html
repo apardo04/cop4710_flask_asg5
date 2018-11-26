@@ -149,7 +149,7 @@ h3 {
                     <td>{{ data[x]["title"] }}</td>
                     <td>{{ data[x]["type"] }}</td>
                     <td>{{ data[x]["paperback"] }}</td>
-                    <td><button id="{{x}}" class="delete" page="books">Delete</button></td>
+                    <td><button pk="{{x}}" class="delete" page="books">Delete</button></td>
                 </tr>
         {% endfor %}
     </table>
@@ -207,7 +207,7 @@ h3 {
                     <td>{{ data[x]["copyNum"] }}</td>
                     <td>{{ data[x]["quality"] }}</td>
                     <td>{{ data[x]["price"] }}</td>
-                    <td><button id="{{x}}" bookCode="{{ data[x]['bookCode'] }}" branchNum="{{ data[x]['branchNum'] }}" copyNum="{{ data[x]['copyNum'] }}" class="delete" page="copies">Delete</button></td>
+                    <td><button pk="{{x}}" bookCode="{{ data[x]['bookCode'] }}" branchNum="{{ data[x]['branchNum'] }}" copyNum="{{ data[x]['copyNum'] }}" class="delete" page="copies">Delete</button></td>
                 </tr>
         {% endfor %}
     </table>
@@ -237,15 +237,22 @@ h3 {
             <th>Publisher Code</th>
             <th>Publisher Name</th>
             <th>City</th>
+            <th>Edit</th>
             <th>Delete</th>
         </tr>
         {% for x in data %}
-                <tr>
+            <tr>
+                <form action="{{ url_for('publisher_edit') }}" method="post">
+
                     <td>{{ x }}</td>
                     <td>{{ data[x]["publisherName"] }}</td>
                     <td>{{ data[x]["city"] }}</td>
-                    <td><button id="{{x}}" class="delete" page="publishers">Delete</button></td>
-                </tr>
+                    <td>
+                        <i class="fa fa-pencil-square-o edit-btn" aria-hidden="true" id="edit-{{x}}"></i>
+                    </td>
+                    <td><button pk="{{x}}" class="delete" page="publishers">Delete</button></td>
+                </form>
+            </tr>
         {% endfor %}
     </table>
 {% endblock %}
@@ -271,13 +278,22 @@ h3 {
         <tr>
             <th>Last Name</th>
             <th>First Name</th>
+            <th>Edit</th>
             <th>Delete</th>
         </tr>
         {% for x in data %}
                 <tr>
-                    <td>{{ data[x]["authorLast"] }}</td>
-                    <td>{{ data[x]["authorFirst"] }}</td>
-                    <td><button id="{{x}}" class="delete" page="authors">Delete</button></td>
+                    <form action="{{ url_for('author_edit') }}" method="post">
+                        <td><input type="text" class="edit-input edit-{{x}}" name="authorLast" value="{{ data[x]["authorLast"] }}"/><span class="data-text edit-{{x}}">{{ data[x]["authorLast"] }}</span></td>
+                        <td><input type="text" class="edit-input edit-{{x}}" name="authorFirst" value="{{ data[x]["authorFirst"] }}"/><span class="data-text edit-{{x}}">{{ data[x]["authorFirst"] }}</span></td>
+                        <td>
+                            <i class="fa fa-pencil-square-o edit-btn" aria-hidden="true" id="edit-{{x}}"></i>
+                            <input type="submit" value="Submit" class="edit-submit edit-{{ x }}">
+                            <input type="hidden" value="authors" name="page">
+                            <input type="hidden" value="{{x}}" name="authorNum">
+                        </td>
+                        <td><button pk="{{x}}" class="delete" page="authors">Delete</button></td>
+                    </form>
                 </tr>
         {% endfor %}
     </table>
@@ -285,18 +301,26 @@ h3 {
 
 {% block script %}
     <script>
-        $("#close-overlay, #book-info-overlay").click(() => {
-            $("#book-info-overlay").hide();
-        });
-
         $("#search-button").click(() => {
             let book = $("#book-search").val();
             if(book != "")
                 showBookData(book);
         });
 
+        $("#close-overlay, #book-info-overlay").click(() => {
+            $("#book-info-overlay").hide();
+        });
+
         $(".book").click(() => {
             showBookData($(event.currentTarget).attr("id"));
+        });
+
+        $(".edit-btn").click((event) => {
+            let editId = $(event.currentTarget).attr('id');
+            $(event.currentTarget).hide();
+            $('span.data-text.'+ editId).hide();
+            $('.edit-input.' + editId).show();
+            $('.edit-submit.' + editId).show();
         });
 
         $("#add-table-btn").click(() => {
@@ -312,7 +336,7 @@ h3 {
                 })
             }
             else {
-                $.post(typeId + "/delete", $(event.currentTarget).attr('id'), (url) => {
+                $.post(typeId + "/delete", $(event.currentTarget).attr('pk'), (url) => {
                     window.location.href = url;
                 })
             }
