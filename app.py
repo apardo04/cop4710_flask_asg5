@@ -8,8 +8,8 @@ PATH = os.path.dirname(os.path.abspath(__file__))
 app=Flask("cop4710_flask_asg5", template_folder=os.path.join(PATH, 'templates'), static_folder=os.path.join(PATH, 'static'))
 
 db = _mysql.connect(host="localhost",
-                    user='root',
-                    passwd='Unodos34',
+                    user='flask_user',
+                    passwd='cop4710',
                     db="book")
 
 
@@ -119,7 +119,11 @@ def publisher_delete():
 
 @app.route("/publishers/edit", methods=["POST"])
 def publisher_edit():
-    return True
+    publisherCode = request.form['publisherCode']
+    publisherName = request.form['publisherName']
+    city = request.form['city']
+    db.query("UPDATE publisher SET publisherName = '" + publisherName + "', city = '" + city + "' WHERE publisherCode = '" + publisherCode + "';")
+    return redirect('/publishers')
 
 @app.route("/authors")
 def authors():
@@ -128,7 +132,6 @@ def authors():
     authors = {}
     for x in r:
         authors[x[0]] = {"authorLast": x[1].decode('utf8'), "authorFirst": x[2].decode('utf8')}
-
     return render_template("content.html", page="authors", data=authors)
 
 @app.route("/authors/add", methods=["POST"])

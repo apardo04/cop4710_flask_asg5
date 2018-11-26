@@ -243,15 +243,16 @@ h3 {
         {% for x in data %}
             <tr>
                 <form action="{{ url_for('publisher_edit') }}" method="post">
-
                     <td>{{ x }}</td>
-                    <td>{{ data[x]["publisherName"] }}</td>
-                    <td>{{ data[x]["city"] }}</td>
+                    <td><input type="text" class="edit-input edit-{{x}}" name="publisherName" value="{{ data[x]["publisherName"] }}"/><span class="data-text edit-{{x}}">{{ data[x]["publisherName"] }}</span></td>
+                    <td><input type="text" class="edit-input edit-{{x}}" name="city" value="{{ data[x]["city"] }}"/><span class="data-text edit-{{x}}">{{ data[x]["city"] }}</span></td>
                     <td>
                         <i class="fa fa-pencil-square-o edit-btn" aria-hidden="true" id="edit-{{x}}"></i>
+                        <input type="submit" value="Submit" class="edit-submit edit-{{ x }}">
+                        <input type="hidden" value="{{x}}" name="publisherCode">
                     </td>
-                    <td><button pk="{{x}}" class="delete" page="publishers">Delete</button></td>
                 </form>
+                <td><button pk="{{x}}" class="delete" page="publishers">Delete</button></td>
             </tr>
         {% endfor %}
     </table>
@@ -289,11 +290,10 @@ h3 {
                         <td>
                             <i class="fa fa-pencil-square-o edit-btn" aria-hidden="true" id="edit-{{x}}"></i>
                             <input type="submit" value="Submit" class="edit-submit edit-{{ x }}">
-                            <input type="hidden" value="authors" name="page">
                             <input type="hidden" value="{{x}}" name="authorNum">
                         </td>
-                        <td><button pk="{{x}}" class="delete" page="authors">Delete</button></td>
                     </form>
+                    <td><button pk="{{x}}" class="delete" page="authors">Delete</button></td>
                 </tr>
         {% endfor %}
     </table>
@@ -311,7 +311,7 @@ h3 {
             $("#book-info-overlay").hide();
         });
 
-        $(".book").click(() => {
+        $(".book").click((event) => {
             showBookData($(event.currentTarget).attr("id"));
         });
 
